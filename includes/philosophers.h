@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:22 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/16 01:06:19 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/18 17:32:50 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 int				checker_args(int argc, char *argv[]);
 int				check_params(t_program *data_program);
-t_program		*initial_data(int argc, char *argv[]);
+t_program		*initial_data(char *argv[]);
 
 // UTILS.C
 
@@ -43,6 +43,7 @@ void			destroy_mutex(t_program *data_program);
 
 // ACTIONS.C
 
+int				has_died(t_philosopher *philosopher);
 void			*to_sleep(t_philosopher *philosopher);
 void			*to_think(t_philosopher *philosopher);
 void			*to_eat(t_philosopher *philosopher);
@@ -50,13 +51,14 @@ void			*routine(void *arg);
 
 // CLOSEP.C
 
-void			close_program(t_program *data_program);
+void			close_program(t_program *data_program, int fail);
 
 // PHILOSOPHERS.C
 
 void			init_thread(t_philosopher *philosophers,
 					t_program *data_program);
 t_philosopher	*create_philosophers(t_program *data_program);
+void			*monitor(void *arg);
 
 
 

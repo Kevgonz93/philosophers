@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:41 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/16 01:04:46 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/18 17:41:33 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,22 @@ void	printer(t_philosopher *philosopher, char *str)
 
 	data_program = philosopher->program;
 	pthread_mutex_lock(&data_program->printer);
-	pthread_mutex_lock(&data_program->is_dead_mutex);
-	if (!data_program->is_dead)
-	{
-		printf("%lld %d %s\n", get_time_ms() - data_program->start_time,
+	// pthread_mutex_lock(&data_program->is_dead_mutex);
+	// if (!data_program->is_dead)
+	// {
+	printf("%lld %d %s\n", get_time_ms() - data_program->start_time,
 			philosopher->id, str);
-	}
-	pthread_mutex_destroy(&data_program->is_dead_mutex);
+	// }
+	// pthread_mutex_unlock(&data_program->is_dead_mutex);
 	pthread_mutex_unlock(&data_program->printer);
+	// pthread_mutex_destroy(&data_program->is_dead_mutex);
 }
 
 void	print_data(t_program *data_program)
 {
+	int i;
+
+	i = 0;
 	printf("-----------------------------------------------\n");
 	printf("total_phil: %d\n", data_program->total_phil);
 	printf("time_to_die: %lld\n", data_program->time_to_die);
@@ -47,7 +51,18 @@ void	print_data(t_program *data_program)
 	printf("time_to_sleep: %lld\n", data_program->time_to_sleep);
 	printf("min_must_eat: %d\n", data_program->min_must_eat);
 	printf("start_time: %lld\n", data_program->start_time);
-	printf("is_dead: %d\n", data_program->is_dead);
+	printf("the philos are:\n");
+	while (i < data_program->total_phil)
+	{
+		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PHILO %d\n", i + 1);
+		printf("\tid: %d\n", data_program->philosophers[i].id);
+		printf("\tleft_fork: %d\n", data_program->philosophers[i].left_fork);
+		printf("\tright_fork: %d\n", data_program->philosophers[i].right_fork);
+		printf("\ttimes_eaten: %d\n", data_program->philosophers[i].eat_count);
+		printf("\tlast_meal: %lld\n", data_program->philosophers[i].last_eat);
+		printf("\tis_dead: %d\n", data_program->philosophers[i].is_dead);
+		i++;
+	}
 	printf("-----------------------------------------------\n");
 }
 
