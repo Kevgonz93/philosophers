@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:34 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/18 16:10:22 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/20 01:19:41 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	forks_init(t_program *data_program)
 			perror("Error: pthread_mutex_init");
 			close_program(data_program, 1);
 		}
+		data_program->forks_init = 1;
 		i++;
 	}
 }
@@ -40,8 +41,12 @@ static void	forks_init(t_program *data_program)
 void	init_mutex(t_program *data_program)
 {
 	printf("intiating mutexs\n");
+	pthread_mutex_init(&data_program->monitor, NULL);
+	data_program->monitor_init = 1;
 	pthread_mutex_init(&data_program->printer, NULL);
-	// pthread_mutex_init(&data_program->is_dead_mutex, NULL);
+	data_program->printer_init = 1;
+	pthread_mutex_init(&data_program->monitor, NULL);
+	data_program->monitor_init = 1;
 	forks_init(data_program);
 }
 
@@ -64,8 +69,10 @@ void	destroy_mutex(t_program *data_program)
 		i = 0;
 		while (i < data_program->total_phil)
 		{
-			pthread_mutex_destroy(&data_program->philosophers[i].is_dead_mutex);
-			pthread_mutex_destroy(&data_program->philosophers[i].last_eat_mutex);
+			pthread_mutex_destroy(
+				&data_program->philosophers[i].eat_count_mutex);
+			pthread_mutex_destroy(
+				&data_program->philosophers[i].last_eat_mutex);
 			i++;
 		}
 	}

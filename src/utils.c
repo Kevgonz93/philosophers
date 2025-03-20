@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:41 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/18 17:41:33 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/20 01:22:09 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	print_data(t_program *data_program)
 	printf("time_to_sleep: %lld\n", data_program->time_to_sleep);
 	printf("min_must_eat: %d\n", data_program->min_must_eat);
 	printf("start_time: %lld\n", data_program->start_time);
+	printf("is_over: %d\n", data_program->is_over);
 	printf("the philos are:\n");
 	while (i < data_program->total_phil)
 	{
@@ -60,7 +61,7 @@ void	print_data(t_program *data_program)
 		printf("\tright_fork: %d\n", data_program->philosophers[i].right_fork);
 		printf("\ttimes_eaten: %d\n", data_program->philosophers[i].eat_count);
 		printf("\tlast_meal: %lld\n", data_program->philosophers[i].last_eat);
-		printf("\tis_dead: %d\n", data_program->philosophers[i].is_dead);
+		printf("\tis_dead: %d\n", data_program->is_over);
 		i++;
 	}
 	printf("-----------------------------------------------\n");

@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:57:04 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/18 17:33:41 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/20 01:15:37 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ t_program	*initial_data(char *argv[])
 			data_program->min_must_eat = ft_atolli(argv[i]);
 	}
 	data_program->start_time = get_time_ms();
+	data_program->is_over = 0;
 	data_program->philosophers = create_philosophers(data_program);
 	return (data_program);
 }

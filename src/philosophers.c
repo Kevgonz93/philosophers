@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:38 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/18 15:47:33 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/19 12:34:53 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,16 +87,8 @@ t_philosopher	*create_philosophers(t_program *data_program)
 		philosopher[i].eat_count = 0;
 		philosopher[i].last_eat = get_time_ms();
 		philosopher[i].program = data_program;
-		if (i % 2 == 0)
-		{
-			philosopher[i].left_fork = i;
-			philosopher[i].right_fork = (i + 1) % data_program->total_phil;
-		}
-		else
-		{
-			philosopher[i].left_fork = (i + 1) % data_program->total_phil;
-			philosopher[i].right_fork = i;
-		}
+		philosopher[i].left_fork = i;
+		philosopher[i].right_fork = (i + 1) % data_program->total_phil;
 		ret = pthread_mutex_init(&philosopher[i].last_eat_mutex, NULL);
 		if (ret != 0)
 		{
