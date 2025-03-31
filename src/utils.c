@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:41 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/20 01:22:09 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/21 19:45:07 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,14 @@ void	printer(t_philosopher *philosopher, char *str)
 
 	data_program = philosopher->program;
 	pthread_mutex_lock(&data_program->printer);
-	// pthread_mutex_lock(&data_program->is_dead_mutex);
-	// if (!data_program->is_dead)
-	// {
-	printf("%lld %d %s\n", get_time_ms() - data_program->start_time,
-			philosopher->id, str);
-	// }
-	// pthread_mutex_unlock(&data_program->is_dead_mutex);
+	printf("%lld Philo %d %s\n", get_time_ms() - data_program->start_time,
+		philosopher->id, str);
 	pthread_mutex_unlock(&data_program->printer);
-	// pthread_mutex_destroy(&data_program->is_dead_mutex);
 }
 
 void	print_data(t_program *data_program)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	printf("-----------------------------------------------\n");

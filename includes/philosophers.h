@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:22 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/18 17:32:50 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/20 23:00:05 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void			close_program(t_program *data_program, int fail);
 
 // PHILOSOPHERS.C
 
+void			finish_thread(t_program *data_program);
 void			init_thread(t_philosopher *philosophers,
 					t_program *data_program);
 t_philosopher	*create_philosophers(t_program *data_program);

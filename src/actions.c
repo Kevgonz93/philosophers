@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:29 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/20 01:20:44 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/23 21:12:15 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ int	has_died(t_philosopher *philosopher)
 	pthread_mutex_lock(&philosopher->last_eat_mutex);
 	if ((get_time_ms() - philosopher->last_eat) > data_program->time_to_die)
 	{
-		pthread_mutex_lock(&data_program->printer);
 		printer(philosopher, "died");
-		pthread_mutex_unlock(&data_program->printer);
+		pthread_mutex_lock(&data_program->isover_mutex);
+		data_program->is_over = 1;
+		pthread_mutex_unlock(&data_program->isover_mutex);
 		pthread_mutex_unlock(&philosopher->last_eat_mutex);
 		return (1);
 	}
@@ -33,15 +34,17 @@ int	has_died(t_philosopher *philosopher)
 void	*to_sleep(t_philosopher *philosopher)
 {
 	t_program	*data_program;
-	long long	new_time;
 
 	data_program = philosopher->program;
-	pthread_mutex_lock(&data_program->printer);
+	pthread_mutex_lock(&data_program->isover_mutex);
+	if (data_program->is_over)
+	{
+		pthread_mutex_unlock(&data_program->isover_mutex);
+		return (NULL);
+	}
+	pthread_mutex_unlock(&data_program->isover_mutex);
 	printer(philosopher, "is sleeping");
-	pthread_mutex_unlock(&data_program->printer);
-	new_time = get_time_ms();
-	while (get_time_ms() - new_time < data_program->time_to_sleep)
-		usleep(100);
+	usleep(data_program->time_to_sleep * 1000);
 	return (NULL);
 }
 
@@ -50,32 +53,56 @@ void	*to_think(t_philosopher *philosopher)
 	t_program	*data_program;
 
 	data_program = philosopher->program;
-	pthread_mutex_lock(&data_program->printer);
+	pthread_mutex_lock(&data_program->isover_mutex);
+	if (data_program->is_over)
+	{
+		pthread_mutex_unlock(&data_program->isover_mutex);
+		return (NULL);
+	}
+	pthread_mutex_unlock(&data_program->isover_mutex);
 	printer(philosopher, "is thinking");
-	pthread_mutex_unlock(&data_program->printer);
+	usleep(data_program->time_to_eat / 2 * 1000);
 	return (NULL);
 }
 
 void	*to_eat(t_philosopher *philosopher)
 {
 	t_program	*data_program;
-	long long	new_time;
 
 	data_program = philosopher->program;
-	pthread_mutex_lock(&data_program->forks[philosopher->left_fork]);
-	pthread_mutex_lock(&data_program->forks[philosopher->right_fork]);
-	pthread_mutex_lock(&data_program->printer);
+	if (philosopher->id % 2 != 0)
+	{
+		pthread_mutex_lock(&data_program->forks[philosopher->right_fork]);
+		printer(philosopher, "has taken right fork");
+		pthread_mutex_lock(&data_program->forks[philosopher->left_fork]);
+		printer(philosopher, "has taken left fork");
+	}
+	else
+	{
+		pthread_mutex_lock(&data_program->forks[philosopher->left_fork]);
+		printer(philosopher, "has taken left fork");
+		pthread_mutex_lock(&data_program->forks[philosopher->right_fork]);
+		printer(philosopher, "has taken right fork");
+	}
+	// pthread_mutex_lock(&data_program->isover_mutex);
+	// if (data_program->is_over)
+	// {
+	// 	pthread_mutex_unlock(&data_program->isover_mutex);
+	// 	pthread_mutex_unlock(&data_program->forks[philosopher->left_fork]);
+	// 	pthread_mutex_unlock(&data_program->forks[philosopher->right_fork]);
+	// 	return (NULL);
+	// }
+	// pthread_mutex_unlock(&data_program->isover_mutex);
 	pthread_mutex_lock(&philosopher->last_eat_mutex);
 	philosopher->last_eat = get_time_ms();
 	pthread_mutex_unlock(&philosopher->last_eat_mutex);
 	printer(philosopher, "is eating");
-	pthread_mutex_unlock(&data_program->printer);
-	new_time = get_time_ms();
-	while (get_time_ms() - new_time < data_program->time_to_eat)
-		usleep(data_program->time_to_eat * 1000);
+	usleep(data_program->time_to_eat * 1000);
+	pthread_mutex_lock(&philosopher->eat_count_mutex);
+	philosopher->eat_count++;
+	pthread_mutex_unlock(&philosopher->eat_count_mutex);
 	pthread_mutex_unlock(&data_program->forks[philosopher->left_fork]);
 	pthread_mutex_unlock(&data_program->forks[philosopher->right_fork]);
-	philosopher->eat_count++;
 	return (NULL);
 }
 
@@ -85,32 +112,22 @@ void	*routine(void *arg)
 	t_program		*data_program;
 
 	philosopher = (t_philosopher *)arg;
-	data_program = (t_program *)arg;
-	pthread_mutex_lock(&data_program->monitor);
+	data_program = philosopher->program;
 	if (philosopher->id % 2 == 1)
-	{
-		to_eat(philosopher);
-		pthread_mutex_lock(&data_program->printer);
-		printer(philosopher, "has finished eating");
-		pthread_mutex_unlock(&data_program->printer);
-		to_sleep(philosopher);
-	}
-	else
-		to_think(philosopher);
+		usleep(100);
 	while (1)
 	{
+		pthread_mutex_lock(&data_program->isover_mutex);
 		if (data_program->is_over)
 		{
-			pthread_mutex_unlock(&data_program->monitor);
+			pthread_mutex_unlock(&data_program->isover_mutex);
 			break ;
 		}
-		pthread_mutex_unlock(&data_program->monitor);
-		to_think(philosopher);
+		pthread_mutex_unlock(&data_program->isover_mutex);
 		to_eat(philosopher);
-		pthread_mutex_lock(&data_program->printer);
 		printer(philosopher, "has finished eating");
-		pthread_mutex_unlock(&data_program->printer);
 		to_sleep(philosopher);
+		to_think(philosopher);
 	}
 	return (NULL);
 }

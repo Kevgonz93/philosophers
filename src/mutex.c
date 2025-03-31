@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:34 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/20 01:19:41 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/21 19:25:35 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,23 @@ static void	forks_init(t_program *data_program)
 
 void	init_mutex(t_program *data_program)
 {
+	int	i;
+
+	i = 0;
 	printf("intiating mutexs\n");
-	pthread_mutex_init(&data_program->monitor, NULL);
+	pthread_mutex_init(&data_program->isover_mutex, NULL);
 	data_program->monitor_init = 1;
 	pthread_mutex_init(&data_program->printer, NULL);
 	data_program->printer_init = 1;
-	pthread_mutex_init(&data_program->monitor, NULL);
-	data_program->monitor_init = 1;
+	while (i < data_program->total_phil)
+	{
+		pthread_mutex_init(
+			&data_program->philosophers[i].eat_count_mutex, NULL);
+		data_program->philosophers[i].eat_count_init = 1;
+		pthread_mutex_init(&data_program->philosophers[i].last_eat_mutex, NULL);
+		data_program->philosophers[i].last_eat_init = 1;
+		i++;
+	}
 	forks_init(data_program);
 }
 
@@ -61,19 +71,20 @@ void	destroy_mutex(t_program *data_program)
 			pthread_mutex_destroy(&data_program->forks[i++]);
 	}
 	else if (data_program->monitor_init)
-		pthread_mutex_destroy(&data_program->monitor);
+		pthread_mutex_destroy(&data_program->isover_mutex);
 	else if (data_program->printer_init)
 		pthread_mutex_destroy(&data_program->printer);
 	else if (data_program->philosophers)
 	{
-		i = 0;
 		while (i < data_program->total_phil)
 		{
-			pthread_mutex_destroy(
-				&data_program->philosophers[i].eat_count_mutex);
-			pthread_mutex_destroy(
-				&data_program->philosophers[i].last_eat_mutex);
-			i++;
+			if (data_program->philosophers[i].eat_count_init)
+				pthread_mutex_destroy(
+					&data_program->philosophers[i].eat_count_mutex);
+			if (data_program->philosophers[i].last_eat_init)
+				pthread_mutex_destroy(
+					&data_program->philosophers[i].last_eat_mutex);
+			i--;
 		}
 	}
 }

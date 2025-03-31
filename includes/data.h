@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:32 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/20 01:17:57 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/03/21 19:24:05 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ typedef struct t_philosopher
 	int					right_fork;
 	int					eat_count;
 	pthread_mutex_t		eat_count_mutex;
+	int					eat_count_init;
 	long long int		last_eat;
 	pthread_mutex_t		last_eat_mutex;
+	int					last_eat_init;
 	struct t_program	*program;
 }	t_philosopher;
 
@@ -38,7 +40,8 @@ typedef struct t_program
 	int				min_must_eat;
 	long long int	start_time;
 	int				is_over;
-	pthread_mutex_t	monitor;
+	pthread_mutex_t	isover_mutex;
+	pthread_t		monitor;
 	int				monitor_init;
 	pthread_mutex_t	*forks;
 	int				forks_init;
