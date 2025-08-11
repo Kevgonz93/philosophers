@@ -6,115 +6,143 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:38 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/21 19:56:10 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 12:25:09 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
+int	has_died(t_philosopher *ph)
+{
+	t_program	*p;
+	int			died;
+
+	p = ph->program;
+
+	pthread_mutex_lock(&ph->last_eat_mutex);
+	died = (get_time_ms() - ph->last_eat) > p->time_to_die;
+	pthread_mutex_unlock(&ph->last_eat_mutex);
+
+	if (died)
+	{
+		pthread_mutex_lock(&p->isover_mutex);
+		if (!p->is_over)
+		{
+			pthread_mutex_unlock(&p->isover_mutex);
+			pthread_mutex_lock(&p->printer);
+			printf("%lld Philo %d died\n",
+				get_time_ms() - p->start_time, ph->id);
+			fflush(stdout);
+			pthread_mutex_unlock(&p->printer);
+			pthread_mutex_lock(&p->isover_mutex);
+			p->is_over = 1;
+		}
+		pthread_mutex_unlock(&p->isover_mutex);
+		return (1);
+	}
+	return (0);
+}
+
+static int	all_full(t_program *p)
+{
+	int	i;
+
+	if (p->min_must_eat < 0)
+		return (0);
+	i = 0;
+	while (i < p->total_phil)
+	{
+		pthread_mutex_lock(&p->philosophers[i].eat_count_mutex);
+		if (p->philosophers[i].eat_count < p->min_must_eat)
+		{
+			pthread_mutex_unlock(&p->philosophers[i].eat_count_mutex);
+			return (0);
+		}
+		pthread_mutex_unlock(&p->philosophers[i].eat_count_mutex);
+		i++;
+	}
+	return (1);
+}
+
 void	*monitor(void *arg)
 {
-	t_program		*data_program;
-	int				i;
+	t_program	*p;
+	int			i;
 
-	data_program = (t_program *)arg;
+	p = (t_program *)arg;
+	i = 0;
+	while (i < p->total_phil)
+	{
+		pthread_mutex_lock(&p->philosophers[i].last_eat_mutex);
+		p->philosophers[i].last_eat = p->start_time;
+		pthread_mutex_unlock(&p->philosophers[i].last_eat_mutex);
+		i++;
+	}
 	while (1)
 	{
+		if (all_full(p))
+			break ;
 		i = 0;
-		while (i < data_program->total_phil)
+		while (i < p->total_phil)
 		{
-			if (has_died(&data_program->philosophers[i]))
-			{
-				pthread_mutex_lock(&data_program->isover_mutex);
-				data_program->is_over = 1;
-				pthread_mutex_unlock(&data_program->isover_mutex);
-				close_program(data_program, 0);
-			}
+			if (has_died(&p->philosophers[i]))
+				return (NULL);
 			i++;
 		}
 		usleep(1000);
 	}
+	pthread_mutex_lock(&p->isover_mutex);
+	p->is_over = 1;
+	pthread_mutex_unlock(&p->isover_mutex);
 	return (NULL);
 }
 
-void	finish_thread(t_program *data_program)
+void	*routine(void *arg)
 {
-	int	i;
-	int	ret;
+	t_philosopher	*ph;
+	t_program		*p;
 
-	data_program->is_over = 1;
-	i = 0;
-	while (i < data_program->total_phil)
+	ph = (t_philosopher *)arg;
+	p = ph->program;
+
+	if (ph->id % 2 == 0)
+		usleep(500);
+
+	while (1)
 	{
-		ret = pthread_join(data_program->philosophers[i].thread, NULL);
-		if (ret != 0)
+		pthread_mutex_lock(&p->isover_mutex);
+		if (p->is_over)
 		{
-			perror("Error: pthread_join philo");
-			close_program(data_program, 1);
+			pthread_mutex_unlock(&p->isover_mutex);
+			break ;
 		}
-		i++;
+		pthread_mutex_unlock(&p->isover_mutex);
+		to_eat(ph);
+		to_sleep(ph);
+		to_think(ph);
 	}
-	ret = pthread_join(data_program->monitor, NULL);
-	if (ret != 0)
-	{
-		perror("Error: pthread_join monitor");
-		close_program(data_program, 1);
-	}
+	return (NULL);
 }
 
-void	init_thread(t_philosopher *philosophers, t_program *data_program)
+void	init_thread(t_philosopher *ph, t_program *p)
 {
 	int	i;
-	int	ret;
 
-	ret = pthread_create(&data_program->monitor, NULL, monitor, data_program);
-	if (ret != 0)
-	{
-		perror("Error: pthread_create");
-		close_program(data_program, 1);
-	}
+	pthread_create(&p->monitor, NULL, monitor, p);
 	i = 0;
-	while (i < data_program->total_phil)
+	while (i < p->total_phil)
 	{
-		ret = pthread_create(&philosophers[i].thread, NULL,
-				routine, &philosophers[i]);
-		if (ret != 0)
-		{
-			perror("Error: pthread_create");
-			close_program(data_program, 1);
-		}
+		pthread_create(&ph[i].thread, NULL, routine, &ph[i]);
 		i++;
 	}
 }
 
-t_philosopher	*create_philosophers(t_program *data_program)
+void	finish_thread(t_program *p)
 {
-	t_philosopher	*philosopher;
-	int				i;
-	int				ret;
+	int	i;
 
+	pthread_join(p->monitor, NULL);
 	i = 0;
-	philosopher = malloc(sizeof(t_philosopher) * data_program->total_phil);
-	if (!philosopher)
-	{
-		perror("Error: philo malloc");
-		exit(1);
-	}
-	while (i < data_program->total_phil)
-	{
-		philosopher[i].id = i + 1;
-		philosopher[i].left_fork = i;
-		philosopher[i].right_fork = (i + 1) % data_program->total_phil;
-		philosopher[i].eat_count = 0;
-		philosopher[i].last_eat = get_time_ms();
-		philosopher[i].program = data_program;
-		ret = pthread_mutex_init(&philosopher[i].last_eat_mutex, NULL);
-		if (ret != 0)
-		{
-			perror("Error: pthread_mutex_init");
-			close_program(data_program, 1);
-		}
-		i++;
-	}
-	return (philosopher);
+	while (i < p->total_phil)
+		pthread_join(p->philosophers[i++].thread, NULL);
 }

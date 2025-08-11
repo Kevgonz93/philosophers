@@ -1,6 +1,7 @@
 #include "philosophers.h"
 
 long long int	ft_atolli(const char *str);
+int				ft_atoll_safe(const char *s, long long *out);
 int				ft_atoi(char *str);
 int				ft_isdigit(int c);
 int				ft_isnum(char *str);

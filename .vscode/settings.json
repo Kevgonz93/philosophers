@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "philosophers.h": "c",
+    "ios": "c",
+    "sstream": "c"
+  }
+}

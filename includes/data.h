@@ -6,7 +6,7 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:32 by kegonza           #+#    #+#             */
-/*   Updated: 2025/03/21 19:24:05 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 11:55:46 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,38 +16,39 @@
 # include "philosophers.h"
 # include <semaphore.h>
 
-typedef struct t_philosopher
+typedef struct s_program	t_program;
+
+typedef struct s_philosopher
 {
-	pthread_t			thread;
-	int					id;
-	int					left_fork;
-	int					right_fork;
-	int					eat_count;
-	pthread_mutex_t		eat_count_mutex;
-	int					eat_count_init;
-	long long int		last_eat;
-	pthread_mutex_t		last_eat_mutex;
-	int					last_eat_init;
-	struct t_program	*program;
+	int				id;
+	long long		last_eat;
+	int				eat_count;
+	pthread_t		thread;
+	pthread_mutex_t	last_eat_mutex;
+	pthread_mutex_t	eat_count_mutex;
+	t_program		*program;
 }	t_philosopher;
 
-typedef struct t_program
+struct s_program
 {
 	int				total_phil;
-	long long int	time_to_die;
-	long long int	time_to_eat;
-	long long int	time_to_sleep;
-	int				min_must_eat;
-	long long int	start_time;
+	long long		time_to_die;
+	long long		time_to_eat;
+	long long		time_to_sleep;
+	long long		min_must_eat;
+	long long		start_time;
 	int				is_over;
-	pthread_mutex_t	isover_mutex;
-	pthread_t		monitor;
-	int				monitor_init;
-	pthread_mutex_t	*forks;
-	int				forks_init;
+
 	pthread_mutex_t	printer;
 	int				printer_init;
+	pthread_mutex_t	isover_mutex;
+	int				isover_init;
+
+	pthread_mutex_t	*forks;
+	int				forks_init;
+
+	pthread_t		monitor;
 	t_philosopher	*philosophers;
-}	t_program;
+};
 
 #endif
