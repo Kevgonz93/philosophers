@@ -12,8 +12,8 @@ En esta prueba no debería morir nadie, no obstante Philo 01 lo hace
 
 ## Forma de entrega correcta
 
-- El proyecto deberá estar en un directorio Philo
-- el ejecutable debe llamarse "philo"
+- El proyecto deberá estar en un directorio **Philo**
+- el ejecutable debe llamarse **"./philo"**
 
 ## Valgrind
 
