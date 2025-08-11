@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
+/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:38 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 12:25:09 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 14:49:46 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,9 @@ int	has_died(t_philosopher *ph)
 	int			died;
 
 	p = ph->program;
-
 	pthread_mutex_lock(&ph->last_eat_mutex);
 	died = (get_time_ms() - ph->last_eat) > p->time_to_die;
 	pthread_mutex_unlock(&ph->last_eat_mutex);
-
 	if (died)
 	{
 		pthread_mutex_lock(&p->isover_mutex);
@@ -71,13 +69,7 @@ void	*monitor(void *arg)
 
 	p = (t_program *)arg;
 	i = 0;
-	while (i < p->total_phil)
-	{
-		pthread_mutex_lock(&p->philosophers[i].last_eat_mutex);
-		p->philosophers[i].last_eat = p->start_time;
-		pthread_mutex_unlock(&p->philosophers[i].last_eat_mutex);
-		i++;
-	}
+	set_initial_time(p);
 	while (1)
 	{
 		if (all_full(p))
@@ -94,33 +86,6 @@ void	*monitor(void *arg)
 	pthread_mutex_lock(&p->isover_mutex);
 	p->is_over = 1;
 	pthread_mutex_unlock(&p->isover_mutex);
-	return (NULL);
-}
-
-void	*routine(void *arg)
-{
-	t_philosopher	*ph;
-	t_program		*p;
-
-	ph = (t_philosopher *)arg;
-	p = ph->program;
-
-	if (ph->id % 2 == 0)
-		usleep(500);
-
-	while (1)
-	{
-		pthread_mutex_lock(&p->isover_mutex);
-		if (p->is_over)
-		{
-			pthread_mutex_unlock(&p->isover_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&p->isover_mutex);
-		to_eat(ph);
-		to_sleep(ph);
-		to_think(ph);
-	}
 	return (NULL);
 }
 

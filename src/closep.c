@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   closep.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
+/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 00:44:56 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 12:20:50 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 13:43:09 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../includes/philosophers.h"
 

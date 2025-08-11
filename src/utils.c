@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
+/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:41 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 12:25:53 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 14:35:41 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	printer(t_philosopher *philosopher, char *str)
 	t_program	*data_program;
 
 	data_program = philosopher->program;
-
 	pthread_mutex_lock(&data_program->isover_mutex);
 	if (data_program->is_over)
 	{

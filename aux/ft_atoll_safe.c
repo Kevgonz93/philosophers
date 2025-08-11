@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoll_safe.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
+/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:01:33 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 12:02:52 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 14:28:37 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <stdio.h>
+
+static void	finish_atoll(long long *out, long long val, long long sing)
+{
+	*out = val * sing;
+}
 
 int	ft_atoll_safe(const char *s, long long *out)
 {
@@ -36,6 +43,5 @@ int	ft_atoll_safe(const char *s, long long *out)
 	}
 	if (*s)
 		return (0);
-	*out = val * sign;
-	return (1);
+	return (finish_atoll(out, val, sign), 1);
 }

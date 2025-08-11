@@ -3,54 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
+/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:29 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 12:21:15 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 14:36:15 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-static void	lock_both_forks(t_philosopher *ph, int left, int right)
+void	*routine(void *arg)
 {
-	int	first;
-	int	second;
+	t_philosopher	*ph;
+	t_program		*p;
 
-	second = right;
-	first = left;
-
-	if (first > second)
+	ph = (t_philosopher *)arg;
+	p = ph->program;
+	if (ph->id % 2 == 0)
+		usleep(500);
+	while (1)
 	{
-		first = right;
-		second = left;
+		pthread_mutex_lock(&p->isover_mutex);
+		if (p->is_over)
+		{
+			pthread_mutex_unlock(&p->isover_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&p->isover_mutex);
+		to_eat(ph);
+		to_sleep(ph);
+		to_think(ph);
 	}
-	pthread_mutex_lock(&ph->program->forks[first]);
-	if (first == left)
-		printer(ph, "has taken left fork");
-	else
-		printer(ph, "has taken right fork");
-	pthread_mutex_lock(&ph->program->forks[second]);
-	if (second == left)
-		printer(ph, "has taken left fork");
-	else
-		printer(ph, "has taken right fork");
-}
-
-static void	unlock_both_forks(t_philosopher *ph, int left, int right)
-{
-	int	first;
-	int	second;
-
-	first = left;
-	second = right;
-	if (first > second)
-	{
-		first = right;
-		second = left;
-	}
-	pthread_mutex_unlock(&ph->program->forks[second]);
-	pthread_mutex_unlock(&ph->program->forks[first]);
+	return (NULL);
 }
 
 void	*to_eat(t_philosopher *ph)
@@ -60,9 +44,7 @@ void	*to_eat(t_philosopher *ph)
 
 	left = ph->id - 1;
 	right = (ph->id) % ph->program->total_phil;
-
 	lock_both_forks(ph, left, right);
-
 	printer(ph, "is eating");
 	pthread_mutex_lock(&ph->last_eat_mutex);
 	ph->last_eat = get_time_ms();

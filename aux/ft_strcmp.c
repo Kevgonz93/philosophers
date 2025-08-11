@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   aux.h                                              :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 14:28:54 by kegonzal          #+#    #+#             */
-/*   Updated: 2025/08/11 15:10:10 by kegonzal         ###   ########.fr       */
+/*   Created: 2025/08/11 14:53:22 by kegonzal          #+#    #+#             */
+/*   Updated: 2025/08/11 15:09:35 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	int	i;
 
-int				ft_atoi(char *str);
-int				ft_atoll_safe(const char *s, long long *out);
-long long int	ft_atolli(const char *str);
-int				ft_isdigit(int c);
-int				ft_isnum(char *str);
-int				ft_strcmp(const char *s1, const char *s2);
-int				ft_strlen(char *str);
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}

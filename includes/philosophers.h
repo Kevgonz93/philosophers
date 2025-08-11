@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
+/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:22 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 12:28:19 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/11 14:55:13 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,31 @@
 # include <sys/time.h>
 # include <limits.h>
 
+// ACTIONS.C
+
+void			*to_sleep(t_philosopher *philosopher);
+void			*to_think(t_philosopher *philosopher);
+void			*to_eat(t_philosopher *philosopher);
+void			*routine(void *arg);
+
+// CHECKERS.C
+
+int				check_params(t_program *data_program);
+int				checker_args(int argc, char *argv[]);
+
+// CLOSEP.C
+
+int				close_program(t_program *p, int fail);
+
+// FORKS.C
+
+void			lock_both_forks(t_philosopher *ph, int left, int right);
+void			unlock_both_forks(t_philosopher *ph, int left, int right);
 
 // INITIAL SETTINGS
 
-int				checker_args(int argc, char *argv[]);
-int				check_params(t_program *data_program);
-t_program		*initial_data(char *argv[]);
 t_program		*initial_data(char **argv);
+void			set_initial_time(t_program *data);
 
 // UTILS.C
 
@@ -42,26 +60,11 @@ int				print_usage(void);
 void			init_mutex(t_program *data_program);
 void			destroy_mutex(t_program *data_program);
 
-// ACTIONS.C
-
-int				has_died(t_philosopher *philosopher);
-void			*to_sleep(t_philosopher *philosopher);
-void			*to_think(t_philosopher *philosopher);
-void			*to_eat(t_philosopher *philosopher);
-void			*routine(void *arg);
-
-// CLOSEP.C
-
-int				close_program(t_program *data_program, int fail);
-
 // PHILOSOPHERS.C
 
-void			finish_thread(t_program *data_program);
-void			init_thread(t_philosopher *philosophers,
-					t_program *data_program);
-// t_philosopher	*create_philosophers(t_program *data_program);
+int				has_died(t_philosopher *philosopher);
 void			*monitor(void *arg);
-
-
+void			init_thread(t_philosopher *ph, t_program *p);
+void			finish_thread(t_program *p);
 
 #endif
