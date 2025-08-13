@@ -6,7 +6,7 @@
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:29 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 18:28:24 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:55:09 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,11 @@ void	*to_sleep(t_philosopher *ph)
 
 void	*to_think(t_philosopher *ph)
 {
+
 	printer(ph, "is thinking");
-	usleep((ph->program->time_to_sleep / 2) * 1000);
+	if (ph->program->margin / 2 <= 5)
+		return (NULL);
+	else
+		usleep((ph->program->time_to_eat / 2) * 1000);
 	return (NULL);
 }

@@ -87,3 +87,25 @@ OK
 SIGTERM: no process found
 
 No-Die Tests: PASSED: 4/6 | FAILED: 2/6
+
+## PRUEBAS A CONSIDERAR
+
+```bash
+./philo 1 800 200 200
+```
+
+```bash
+./philo 5 800 200 200
+```
+
+```bash
+./philo 5 800 200 200 7
+```
+
+```bash
+./philo 4 410 200 200
+```
+
+```bash
+./philo 4 310 200 100
+```

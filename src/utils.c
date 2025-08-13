@@ -6,7 +6,7 @@
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:41 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 14:35:41 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/13 11:28:48 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,21 @@ void	printer(t_philosopher *philosopher, char *str)
 		philosopher->id, str);
 	fflush(stdout);
 	pthread_mutex_unlock(&data_program->printer);
+}
+
+long long	get_margin(t_program *data_program)
+{
+	long long	result;
+	long long	tdie;
+	long long	teat;
+	long long	tsleep;
+
+	tdie = data_program->time_to_die;
+	teat = data_program->time_to_eat;
+	tsleep = data_program->time_to_sleep;
+
+	result = tdie - teat - tsleep;
+	return (result);
 }
 
 // void	print_data(t_program *data_program)

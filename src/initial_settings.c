@@ -6,7 +6,7 @@
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:57:04 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 14:49:57 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/13 11:22:46 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ t_program	*initial_data(char **argv)
 		return (free(data_program), NULL);
 	data_program->start_time = get_time_ms();
 	data_program->philosophers = create_philosophers(data_program);
+	data_program->margin = get_margin(data_program);
 	return (data_program);
 }
 

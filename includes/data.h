@@ -6,7 +6,7 @@
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:32 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 14:38:36 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/13 11:21:24 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ struct s_program
 	long long		time_to_sleep;
 	long long		min_must_eat;
 	long long		start_time;
+	long long		margin;
 	int				is_over;
 	pthread_mutex_t	printer;
 	int				printer_init;

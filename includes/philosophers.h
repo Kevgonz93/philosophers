@@ -6,7 +6,7 @@
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:22 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/11 14:55:13 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/13 11:30:21 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ long long		get_time_ms(void);
 void			printer(t_philosopher *philosopher, char *str);
 void			print_data(t_program *data_program);
 int				print_usage(void);
+long long		get_margin(t_program *data_program);
 
 // MUTEX.C
 
