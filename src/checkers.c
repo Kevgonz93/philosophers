@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checkers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:00:50 by kegonzal          #+#    #+#             */
-/*   Updated: 2025/08/11 14:55:29 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/17 00:53:54 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	check_params(t_program *data_program)
 	int	count;
 
 	count = 0;
-	if (data_program->total_phil < 2 || data_program->total_phil > 200)
+	if (data_program->total_phil < 1 || data_program->total_phil > 200)
 		count = aux_check_params("NUM_PHILOS");
 	else if (data_program->time_to_die < 60
 		|| data_program->time_to_die > INT_MAX)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:29 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/13 12:55:09 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/17 00:57:45 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,19 @@ void	*to_eat(t_philosopher *ph)
 	int	left;
 	int	right;
 
+	if (ph->program->total_phil == 1)
+	{
+		printer(ph, "has taken a fork");
+		usleep(ph->program->time_to_die * 1000);
+		return (NULL);
+}
 	left = ph->id - 1;
 	right = (ph->id) % ph->program->total_phil;
 	lock_both_forks(ph, left, right);
-	printer(ph, "is eating");
 	pthread_mutex_lock(&ph->last_eat_mutex);
 	ph->last_eat = get_time_ms();
 	pthread_mutex_unlock(&ph->last_eat_mutex);
+	printer(ph, "is eating");
 	usleep(ph->program->time_to_eat * 1000);
 	pthread_mutex_lock(&ph->eat_count_mutex);
 	ph->eat_count++;
