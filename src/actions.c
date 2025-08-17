@@ -30,8 +30,38 @@ void	*routine(void *arg)
 			break ;
 		}
 		pthread_mutex_unlock(&p->isover_mutex);
+		
+		// Verificar si el programa ha terminado antes de comer
+		pthread_mutex_lock(&p->isover_mutex);
+		if (p->is_over)
+		{
+			pthread_mutex_unlock(&p->isover_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&p->isover_mutex);
+		
 		to_eat(ph);
+		
+		// Verificar si el programa ha terminado antes de dormir
+		pthread_mutex_lock(&p->isover_mutex);
+		if (p->is_over)
+		{
+			pthread_mutex_unlock(&p->isover_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&p->isover_mutex);
+		
 		to_sleep(ph);
+		
+		// Verificar si el programa ha terminado antes de pensar
+		pthread_mutex_lock(&p->isover_mutex);
+		if (p->is_over)
+		{
+			pthread_mutex_unlock(&p->isover_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&p->isover_mutex);
+		
 		to_think(ph);
 	}
 	return (NULL);
@@ -47,15 +77,47 @@ void	*to_eat(t_philosopher *ph)
 		printer(ph, "has taken a fork");
 		usleep(ph->program->time_to_die * 1000);
 		return (NULL);
-}
+	}
+	
+	// Verificar si el programa ha terminado antes de intentar comer
+	pthread_mutex_lock(&ph->program->isover_mutex);
+	if (ph->program->is_over)
+	{
+		pthread_mutex_unlock(&ph->program->isover_mutex);
+		return (NULL);
+	}
+	pthread_mutex_unlock(&ph->program->isover_mutex);
+	
 	left = ph->id - 1;
 	right = (ph->id) % ph->program->total_phil;
 	lock_both_forks(ph, left, right);
+	
+	// Verificar nuevamente si el programa ha terminado después de tomar los tenedores
+	pthread_mutex_lock(&ph->program->isover_mutex);
+	if (ph->program->is_over)
+	{
+		unlock_both_forks(ph, left, right);
+		pthread_mutex_unlock(&ph->program->isover_mutex);
+		return (NULL);
+	}
+	pthread_mutex_unlock(&ph->program->isover_mutex);
+	
 	pthread_mutex_lock(&ph->last_eat_mutex);
 	ph->last_eat = get_time_ms();
 	pthread_mutex_unlock(&ph->last_eat_mutex);
 	printer(ph, "is eating");
 	usleep(ph->program->time_to_eat * 1000);
+	
+	// Verificar una vez más antes de incrementar el contador
+	pthread_mutex_lock(&ph->program->isover_mutex);
+	if (ph->program->is_over)
+	{
+		unlock_both_forks(ph, left, right);
+		pthread_mutex_unlock(&ph->program->isover_mutex);
+		return (NULL);
+	}
+	pthread_mutex_unlock(&ph->program->isover_mutex);
+	
 	pthread_mutex_lock(&ph->eat_count_mutex);
 	ph->eat_count++;
 	pthread_mutex_unlock(&ph->eat_count_mutex);
