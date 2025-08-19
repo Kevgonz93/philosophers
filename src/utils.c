@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:41 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/13 11:28:48 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:28:12 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,38 +52,9 @@ long long	get_margin(t_program *data_program)
 	tdie = data_program->time_to_die;
 	teat = data_program->time_to_eat;
 	tsleep = data_program->time_to_sleep;
-
 	result = tdie - teat - tsleep;
 	return (result);
 }
-
-// void	print_data(t_program *data_program)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	printf("-----------------------------------------------\n");
-// 	printf("total_phil: %d\n", data_program->total_phil);
-// 	printf("time_to_die: %lld\n", data_program->time_to_die);
-// 	printf("time_to_eat: %lld\n", data_program->time_to_eat);
-// 	printf("time_to_sleep: %lld\n", data_program->time_to_sleep);
-// 	printf("min_must_eat: %d\n", data_program->min_must_eat);
-// 	printf("start_time: %lld\n", data_program->start_time);
-// 	printf("is_over: %d\n", data_program->is_over);
-// 	printf("the philos are:\n");
-// 	while (i < data_program->total_phil)
-// 	{
-// 		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PHILO %d\n", i + 1);
-// 		printf("\tid: %d\n", data_program->philosophers[i].id);
-// 		printf("\tleft_fork: %d\n", data_program->philosophers[i].left_fork);
-// 		printf("\tright_fork: %d\n", data_program->philosophers[i].right_fork);
-// 		printf("\ttimes_eaten: %d\n", data_program->philosophers[i].eat_count);
-// 		printf("\tlast_meal: %lld\n", data_program->philosophers[i].last_eat);
-// 		printf("\tis_dead: %d\n", data_program->is_over);
-// 		i++;
-// 	}
-// 	printf("-----------------------------------------------\n");
-// }
 
 int	print_usage(void)
 {

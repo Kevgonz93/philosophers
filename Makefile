@@ -16,6 +16,7 @@ SRCS_SRC = actions.c \
 	checkers.c \
 	closep.c \
 	forks.c \
+	helpers.c \
 	initial_settings.c \
 	mutex.c \
 	philosophers.c \

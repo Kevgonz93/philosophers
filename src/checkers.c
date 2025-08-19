@@ -6,11 +6,21 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:00:50 by kegonzal          #+#    #+#             */
-/*   Updated: 2025/08/17 00:53:54 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/19 20:35:57 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
+
+int	is_over(t_program *p)
+{
+	int	ret;
+
+	pthread_mutex_lock(&p->isover_mutex);
+	ret = p->is_over;
+	pthread_mutex_unlock(&p->isover_mutex);
+	return (ret);
+}
 
 static int	aux_check_params(char *mssg)
 {

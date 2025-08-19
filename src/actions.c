@@ -6,11 +6,22 @@
 /*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:29 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/17 00:57:45 by kegonza          ###   ########.fr       */
+/*   Updated: 2025/08/19 20:53:01 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
+
+static void	do_cycle(t_philosopher *ph)
+{
+	to_eat(ph);
+	if (is_over(ph->program))
+		return ;
+	to_sleep(ph);
+	if (is_over(ph->program))
+		return ;
+	to_think(ph);
+}
 
 void	*routine(void *arg)
 {
@@ -21,49 +32,8 @@ void	*routine(void *arg)
 	p = ph->program;
 	if (ph->id % 2 == 0)
 		usleep(500);
-	while (1)
-	{
-		pthread_mutex_lock(&p->isover_mutex);
-		if (p->is_over)
-		{
-			pthread_mutex_unlock(&p->isover_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&p->isover_mutex);
-		
-		// Verificar si el programa ha terminado antes de comer
-		pthread_mutex_lock(&p->isover_mutex);
-		if (p->is_over)
-		{
-			pthread_mutex_unlock(&p->isover_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&p->isover_mutex);
-		
-		to_eat(ph);
-		
-		// Verificar si el programa ha terminado antes de dormir
-		pthread_mutex_lock(&p->isover_mutex);
-		if (p->is_over)
-		{
-			pthread_mutex_unlock(&p->isover_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&p->isover_mutex);
-		
-		to_sleep(ph);
-		
-		// Verificar si el programa ha terminado antes de pensar
-		pthread_mutex_lock(&p->isover_mutex);
-		if (p->is_over)
-		{
-			pthread_mutex_unlock(&p->isover_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&p->isover_mutex);
-		
-		to_think(ph);
-	}
+	while (!is_over(p))
+		do_cycle(ph);
 	return (NULL);
 }
 
@@ -78,52 +48,63 @@ void	*to_eat(t_philosopher *ph)
 		usleep(ph->program->time_to_die * 1000);
 		return (NULL);
 	}
-	
-	// Verificar si el programa ha terminado antes de intentar comer
-	pthread_mutex_lock(&ph->program->isover_mutex);
-	if (ph->program->is_over)
-	{
-		pthread_mutex_unlock(&ph->program->isover_mutex);
+	if (is_over(ph->program) || reached_goal(ph))
 		return (NULL);
-	}
-	pthread_mutex_unlock(&ph->program->isover_mutex);
-	
 	left = ph->id - 1;
-	right = (ph->id) % ph->program->total_phil;
+	right = ph->id % ph->program->total_phil;
 	lock_both_forks(ph, left, right);
-	
-	// Verificar nuevamente si el programa ha terminado después de tomar los tenedores
-	pthread_mutex_lock(&ph->program->isover_mutex);
-	if (ph->program->is_over)
-	{
-		unlock_both_forks(ph, left, right);
-		pthread_mutex_unlock(&ph->program->isover_mutex);
-		return (NULL);
-	}
-	pthread_mutex_unlock(&ph->program->isover_mutex);
-	
-	pthread_mutex_lock(&ph->last_eat_mutex);
-	ph->last_eat = get_time_ms();
-	pthread_mutex_unlock(&ph->last_eat_mutex);
-	printer(ph, "is eating");
-	usleep(ph->program->time_to_eat * 1000);
-	
-	// Verificar una vez más antes de incrementar el contador
-	pthread_mutex_lock(&ph->program->isover_mutex);
-	if (ph->program->is_over)
-	{
-		unlock_both_forks(ph, left, right);
-		pthread_mutex_unlock(&ph->program->isover_mutex);
-		return (NULL);
-	}
-	pthread_mutex_unlock(&ph->program->isover_mutex);
-	
-	pthread_mutex_lock(&ph->eat_count_mutex);
-	ph->eat_count++;
-	pthread_mutex_unlock(&ph->eat_count_mutex);
-	unlock_both_forks(ph, left, right);
+	do_eat_phase(ph, left, right);
 	return (NULL);
 }
+
+// void	*to_eat(t_philosopher *ph)
+// {
+// 	int	left;
+// 	int	right;
+
+// 	if (ph->program->total_phil == 1)
+// 	{
+// 		printer(ph, "has taken a fork");
+// 		usleep(ph->program->time_to_die * 1000);
+// 		return (NULL);
+// 	}
+// 	pthread_mutex_lock(&ph->program->isover_mutex);
+// 	if (ph->program->is_over)
+// 	{
+// 		pthread_mutex_unlock(&ph->program->isover_mutex);
+// 		return (NULL);
+// 	}
+// 	pthread_mutex_unlock(&ph->program->isover_mutex);
+// 	left = ph->id - 1;
+// 	right = (ph->id) % ph->program->total_phil;
+// 	lock_both_forks(ph, left, right);
+// 	pthread_mutex_lock(&ph->program->isover_mutex);
+// 	if (ph->program->is_over)
+// 	{
+// 		unlock_both_forks(ph, left, right);
+// 		pthread_mutex_unlock(&ph->program->isover_mutex);
+// 		return (NULL);
+// 	}
+// 	pthread_mutex_unlock(&ph->program->isover_mutex);
+// 	pthread_mutex_lock(&ph->last_eat_mutex);
+// 	ph->last_eat = get_time_ms();
+// 	pthread_mutex_unlock(&ph->last_eat_mutex);
+// 	printer(ph, "is eating");
+// 	usleep(ph->program->time_to_eat * 1000);
+// 	pthread_mutex_lock(&ph->program->isover_mutex);
+// 	if (ph->program->is_over)
+// 	{
+// 		unlock_both_forks(ph, left, right);
+// 		pthread_mutex_unlock(&ph->program->isover_mutex);
+// 		return (NULL);
+// 	}
+// 	pthread_mutex_unlock(&ph->program->isover_mutex);
+// 	pthread_mutex_lock(&ph->eat_count_mutex);
+// 	ph->eat_count++;
+// 	pthread_mutex_unlock(&ph->eat_count_mutex);
+// 	unlock_both_forks(ph, left, right);
+// 	return (NULL);
+// }
 
 void	*to_sleep(t_philosopher *ph)
 {
@@ -134,7 +115,6 @@ void	*to_sleep(t_philosopher *ph)
 
 void	*to_think(t_philosopher *ph)
 {
-
 	printer(ph, "is thinking");
 	if (ph->program->margin / 2 <= 5)
 		return (NULL);

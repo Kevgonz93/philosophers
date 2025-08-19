@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kegonza <kegonzal@student.42madrid.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:37:22 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/13 11:30:21 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:48:24 by kegonza          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void			*routine(void *arg);
 
 // CHECKERS.C
 
+int				is_over(t_program *p);
 int				check_params(t_program *data_program);
 int				checker_args(int argc, char *argv[]);
 
@@ -42,6 +43,11 @@ int				close_program(t_program *p, int fail);
 
 void			lock_both_forks(t_philosopher *ph, int left, int right);
 void			unlock_both_forks(t_philosopher *ph, int left, int right);
+
+// HELPERS.C
+
+int				reached_goal(t_philosopher *ph);
+void			do_eat_phase(t_philosopher *ph, int left, int right);
 
 // INITIAL SETTINGS
 
