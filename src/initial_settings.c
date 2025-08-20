@@ -6,7 +6,7 @@
 /*   By: kegonzal <kegonzal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:57:04 by kegonza           #+#    #+#             */
-/*   Updated: 2025/08/13 11:22:46 by kegonzal         ###   ########.fr       */
+/*   Updated: 2025/08/20 10:45:19 by kegonzal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,9 @@ static t_philosopher	*create_philosophers(t_program *p)
 	while (i < p->total_phil)
 	{
 		ph[i].id = i + 1;
-		ph[i].eat_count = 0;
 		ph[i].last_eat = 0;
+		ph[i].eat_count = 0;
 		ph[i].program = p;
-		ph[i].last_eat_mutex = (pthread_mutex_t){0};
-		ph[i].eat_count_mutex = (pthread_mutex_t){0};
 		i++;
 	}
 	return (ph);
@@ -64,8 +62,12 @@ t_program	*initial_data(char **argv)
 	if (!parse_args(argv, data_program))
 		return (free(data_program), NULL);
 	data_program->start_time = get_time_ms();
-	data_program->philosophers = create_philosophers(data_program);
 	data_program->margin = get_margin(data_program);
+	data_program->is_over = 0;
+	data_program->printer_init = 0;
+	data_program->isover_init = 0;
+	data_program->forks_init = 0;
+	data_program->philosophers = create_philosophers(data_program);
 	return (data_program);
 }
 
